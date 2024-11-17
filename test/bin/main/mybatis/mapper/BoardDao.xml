@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test.dao.IBoardDao">
+	<insert id="insert">
+		INSERT INTO tbl_board (title, content, writer, filename, regdate) VALUES
+		(#{board.title}, #{board.content}, #{board.writer}, #{board.filename}, now())
+	</insert>
+	<select id="getCount" resultType="_int">
+		SELECT COUNT(*) FROM tbl_board
+	</select>
+	<select id="findByBno" resultType="com.example.test.dto.BoardDto">
+		SELECT * FROM tbl_board WHERE bno = #{bno}
+	</select>
+	<select id="findAll" resultType="com.example.test.dto.BoardDto">
+		SELECT * FROM tbl_board
+	</select>
+	<select id="findAllWithPaging" resultType="com.example.test.dto.BoardDto">
+		SELECT * FROM tbl_board LIMIT #{startNum}, 10
+	</select>
+	<select id="findAllWithPaging2" resultType="com.example.test.dto.BoardDto">
+		SELECT * FROM tbl_board LIMIT #{cri.startNum}, #{cri.amount}
+	</select>
+	<select id="findByOptions" resultType="com.example.test.dto.BoardDto">
+		SELECT * FROM tbl_board
+		<where>
+			<choose>
+				<when test="board.title != ''">
+				<bind name="pattern" value="'%' + title + '%'"/>
+					title LIKE #{pattern} AND
+				</when>
+				<when test="board.content != ''">
+				<bind name="pattern" value="'%' + content + '%'"/>
+					content LIKE #{pattern} AND
+				</when>
+				<when test="board.writer != ''">
+				<bind name="pattern" value="'%' + writer + '%'"/>
+					writer LIKE #{pattern} AND
+				</when>
+				<when test="board.filename != ''">
+				<bind name="pattern" value="'%' + filename + '%'"/>
+					filename LIKE #{pattern} AND
+				</when>
+			</choose>
+		</where>
+	</select>
+	<update id="update">
+		UPDATE tbl_board
+		<set>
+			<if test="board.title != ''">
+				title = #{board.title},
+			</if>
+			<if test="board.content != ''">
+				content = #{board.content},
+			</if>
+			<if test="board.writer != null and board.writer != ''">
+				writer = #{board.writer},
+			</if>
+			<if test="board.filename != null and board.filename != ''">
+				filename = #{board.filename},
+			</if>
+			modifydate = now()
+		</set>
+		WHERE bno = #{board.bno}
+	</update>
+	<delete id="delete">
+		DELETE FROM tbl_board WHERE bno = #{bno}
+	</delete>
+</mapper>

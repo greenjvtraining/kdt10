@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test.dao.IMemberDao">
+	<insert id="insert">
+		INSERT INTO tbl_member (id, pw, name, birth, gender, regdate) VALUES
+		(#{member.id}, #{member.pw}, #{member.name}, #{member.birth}, #{member.gender}, now())
+	</insert>
+	<select id="findByid" resultType="com.example.test.dto.MemberDto">
+		SELECT * FROM tbl_member WHERE id = #{id}
+	</select>
+	<update id="update">
+		UPDATE tbl_member
+		<set>
+			<if test="member.pw != ''">
+				pw = #{member.pw},
+			</if>
+			<if test="member.name != ''">
+				name = #{member.name},
+			</if>
+			<if test="member.birth != ''">
+				birth = #{member.birth},
+			</if>
+			<if test="member.gender != ''">
+				gender = #{member.gender},
+			</if>
+		</set>
+		WHERE id = #{member.id}
+	</update>
+	<select id="login" resultType="_int">
+		SELECT COUNT(*) FROM tbl_member WHERE id = #{id} AND pw = #{pw}
+	</select>
+	<delete id="delete">
+		DELETE FROM tbl_member WHERE id = #{id}
+	</delete>
+</mapper>
